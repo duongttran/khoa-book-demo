@@ -4,11 +4,11 @@ const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const {
-  createAuthor,
-  readAuthor,
-  updateAuthor,
-  deleteAuthor,
-} = require("./src/controllers/authorController");
+  createBook,
+  readBook,
+  updateBook,
+  deleteBook,
+} = require("./src/controllers/bookController");
 mongoose
   .connect(process.env.DB_LOCAL, {
     useCreateIndex: true,
@@ -20,6 +20,10 @@ mongoose
   .catch((err) => console.log(err));
 
 const router = express.Router();
+const {
+  createGenre,
+  readGenres,
+} = require("./src/controllers/genreControllers");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -29,12 +33,12 @@ router.get("/", (req, res) => {
   return res.status(200).json({ status: "ok", data: [] });
 });
 
-//why this doesn't work with router.get(/authors)and why can't I use {{url}}?
+//POST create new book
+router.route("/books").get(readBook).post(createBook);
 
-//POST create new author
-router.route("/authors").get(readAuthor).post(createAuthor);
+router.route("/books/:id").delete(deleteBook).put(updateBook);
 
-router.route("/authors/:id").delete(deleteAuthor).put(updateAuthor);
+router.route("/genres").post(createGenre).get(readGenres);
 
 app.listen(process.env.PORT, () => {
   console.log("App is running on port", process.env.PORT);
